@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper SYSTEM "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.atguigu.gmall.manage.mapper.BaseAttrInfoMapper">
+
+    <!---->
+    <resultMap id="baseAttrInfoMap" type="com.atguigu.gmall.bean.BaseAttrInfo" autoMapping="true">
+
+        <!--id 表示主键
+            column 表示通过sql语句查询出来的列名
+            property 表示实体类的属性名
+            result 表示普通列名-->
+        <id column="id" property="id"/>
+        <!--mybatis 在处理一对多出现id重复的情况下，使用别名控制-->
+        <collection property="attrValueList" ofType="com.atguigu.gmall.bean.BaseAttrValue" autoMapping="true">
+            <id column="attr_value_id" property="id"/>
+        </collection>
+    </resultMap>
+
+    <select id="getBaseAttrInfoListByCatalog3Id" resultMap="baseAttrInfoMap">
+        select a.id,a.attr_name,a.catalog3_Id,b.id attr_value_id,b.value_name,b.attr_id
+        from base_attr_info a inner join base_attr_value b
+        on a.id = b.attr_id where a.catalog3_Id = #{0}
+    </select>
+</mapper>

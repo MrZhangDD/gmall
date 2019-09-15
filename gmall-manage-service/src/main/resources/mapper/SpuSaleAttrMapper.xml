@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper SYSTEM "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.atguigu.gmall.manage.mapper.SpuSaleAttrMapper">
+
+    <!---->
+    <resultMap id="selectSpuSaleAttrList" type="com.atguigu.gmall.bean.SpuSaleAttr" autoMapping="true">
+
+        <!--id 表示主键
+            column 表示通过sql语句查询出来的列名
+            property 表示实体类的属性名
+            result 表示普通列名-->
+        <id column="id" property="id"/>
+        <!--mybatis 在处理一对多出现id重复的情况下，使用别名控制-->
+        <collection property="spuSaleAttrValueList" ofType="com.atguigu.gmall.bean.SpuSaleAttrValue" autoMapping="true">
+            <id column="sale_attr_value_id" property="id"/>
+        </collection>
+    </resultMap>
+
+    <select id="selectSpuSaleAttrList" resultMap="selectSpuSaleAttrList">
+        select a.id,a.spu_id,a.sale_attr_id,a.sale_attr_name,b.id sale_attr_value_id,b.sale_attr_value_name
+        from spu_sale_attr a inner join spu_sale_attr_value b
+        on a.spu_id = b.spu_id and a.sale_attr_id = b.sale_attr_id
+        where a.spu_id = #{0}
+        <!--mybatis #{0}表示接口的第一个参数
+            通用mapper： 一个参数可以写0，两个参数#{arg},#{arg1}-->
+    </select>
+    <!--mybatis 中可以使用0,1作为参数的传递顺序，但是通用mapper不能直接使用0,1 必须加上arg-->
+    <select id="selectSpuSaleAttrListChechBySku" resultMap="selectSpuSaleAttrList">
+        SELECT
+        a.id,a.spu_id,a.sale_attr_name,a.sale_attr_id,
+        b.id sale_attr_value_id,b.sale_attr_value_name,c.sku_id,
+        if(c.sku_id is not null,1,0) as isChecked FROM
+        spu_sale_attr a INNER JOIN spu_sale_attr_value b ON a.spu_id = b.spu_id
+        AND a.sale_attr_id = b.sale_attr_id
+        LEFT JOIN sku_sale_attr_value c ON c.sale_attr_id = a.sale_attr_id
+        AND c.sale_attr_value_id = b.id
+        AND sku_id = #{skuId}
+        WHERE
+        a.spu_id =  #{spuId};
+
+    </select>
+
+
+</mapper>
