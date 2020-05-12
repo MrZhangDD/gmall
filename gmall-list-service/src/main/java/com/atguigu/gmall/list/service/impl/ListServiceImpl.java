@@ -1,5 +1,6 @@
 package com.atguigu.gmall.list.service.impl;
 
+import com.alibaba.dubbo.config.annotation.Service;
 import com.atguigu.gmall.bean.SkuLsInfo;
 import com.atguigu.gmall.bean.SkuLsParams;
 import com.atguigu.gmall.bean.SkuLsResult;
@@ -26,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Service
 public class ListServiceImpl implements ListService {
 
     @Autowired
@@ -54,10 +56,11 @@ public class ListServiceImpl implements ListService {
         return skuLsResult;
     }
 
+    //由于es中没有数据，所以执行下列代码会报错
     private SkuLsResult makeResultForSearch(SkuLsParams skuLsParams, SearchResult searchResult) {
         SkuLsResult skuLsResult = new SkuLsResult();
 
-        ArrayList<SkuLsInfo> arrList = new ArrayList<SkuLsInfo>();
+        List<SkuLsInfo> arrList = new ArrayList<SkuLsInfo>();
         List<SearchResult.Hit<SkuLsInfo, Void>> hits = searchResult.getHits(SkuLsInfo.class);
         for (SearchResult.Hit<SkuLsInfo, Void> hit : hits) {
             SkuLsInfo skuLsInfo = hit.source;
